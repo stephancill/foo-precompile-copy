@@ -81,6 +81,26 @@ fn goal4_gas_schedule_versioned() {
     assert!(gas_c > gas_b, "ForkC writes are pricier + v3 reads frozen flags: gas_c={gas_c} gas_b={gas_b}");
 }
 
+// Goal 1 (v4): zero-value transfers are a successful no-op through ForkC but
+// are rejected from ForkD onward. The frozen ForkC behavior is unchanged.
+#[test]
+fn goal1_zero_value_rejected_at_forkd() {
+    // ForkC (v3): value 0 is allowed (no such check yet).
+    let mut s = seeded(1, 100);
+    let (r, _) = Dispatcher::dispatch(&mut s, Hardfork::ForkC, GAS, selector::TRANSFER, &[1, 2, 0]);
+    assert_eq!(r, Ok(Output::Unit));
+
+    // ForkD (v4): same call now reverts; state untouched.
+    let mut s = seeded(1, 100);
+    let (r, _) = Dispatcher::dispatch(&mut s, Hardfork::ForkD, GAS, selector::TRANSFER, &[1, 2, 0]);
+    assert_eq!(r, Err(Error::ZeroValueTransfer));
+
+    // A normal ForkD transfer still runs the full v4 pipeline.
+    let (r, _) = Dispatcher::dispatch(&mut s, Hardfork::ForkD, GAS, selector::TRANSFER, &[1, 2, 10]);
+    assert_eq!(r, Ok(Output::Unit));
+    assert_eq!(FooStorage::balance(&mut s, Address(2)).unwrap(), 10);
+}
+
 // The whole point: a historical ForkA block replays under v1 semantics even
 // though v2 and v3 now exist in the binary.
 #[test]

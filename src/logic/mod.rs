@@ -32,3 +32,6 @@ pub use v2::FooV2;
 
 mod v3;
 pub use v3::FooV3;
+
+mod v4;
+pub use v4::FooV4;
