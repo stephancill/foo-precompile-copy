@@ -10,7 +10,7 @@
 //! is a one-line arm here.
 
 use crate::gas::{GasParams, GAS_PARAMS_V1, GAS_PARAMS_V2};
-use crate::logic::{Foo, FooV1, FooV2, FooV3};
+use crate::logic::{Foo, FooV1, FooV2, FooV3, FooV4};
 use crate::primitives::Hardfork;
 
 pub struct VersionManager;
@@ -22,6 +22,7 @@ impl VersionManager {
             Hardfork::Genesis | Hardfork::ForkA => &FooV1,
             Hardfork::ForkB => &FooV2,
             Hardfork::ForkC => &FooV3,
+            Hardfork::ForkD => &FooV4,
         }
     }
 
@@ -29,7 +30,8 @@ impl VersionManager {
     pub fn gas_params_for(fork: Hardfork) -> GasParams {
         match fork {
             Hardfork::Genesis | Hardfork::ForkA | Hardfork::ForkB => GAS_PARAMS_V1,
-            Hardfork::ForkC => GAS_PARAMS_V2,
+            // v4 spans ForkD without a gas change: same frozen schedule as ForkC.
+            Hardfork::ForkC | Hardfork::ForkD => GAS_PARAMS_V2,
         }
     }
 }
