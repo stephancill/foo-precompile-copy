@@ -22,6 +22,11 @@ pub trait Foo {
     fn set_frozen(&self, _storage: &mut dyn Storage, _account: Address, _frozen: bool) -> Result<(), Error> {
         Err(Error::UnknownFunctionSelector(selector::SET_FROZEN))
     }
+
+    // Added in v4. Default = pre-activation behavior (inherited by v1, v2, v3).
+    fn burn(&self, _storage: &mut dyn Storage, _from: Address, _value: U256) -> Result<(), Error> {
+        Err(Error::UnknownFunctionSelector(selector::BURN))
+    }
 }
 
 mod v1;
@@ -32,3 +37,6 @@ pub use v2::FooV2;
 
 mod v3;
 pub use v3::FooV3;
+
+mod v4;
+pub use v4::FooV4;

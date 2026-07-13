@@ -81,6 +81,29 @@ fn goal4_gas_schedule_versioned() {
     assert!(gas_c > gas_b, "ForkC writes are pricier + v3 reads frozen flags: gas_c={gas_c} gas_b={gas_b}");
 }
 
+// Goal 3 (v4): a NEW method. Before ForkD the burn selector is unsupported
+// (frozen versions return the original unknown-selector error); from ForkD it
+// works. Existing methods are unchanged (copied verbatim into v4).
+#[test]
+fn goal3_burn_new_method_at_forkd() {
+    let mut s = seeded(1, 100);
+
+    // Pre-activation: unknown selector, no state gas.
+    let (r, gas) = Dispatcher::dispatch(&mut s, Hardfork::ForkC, GAS, selector::BURN, &[1, 40]);
+    assert_eq!(r, Err(Error::UnknownFunctionSelector(selector::BURN)));
+    assert_eq!(gas, 0);
+
+    // ForkD: burn reduces the balance.
+    let (r, _) = Dispatcher::dispatch(&mut s, Hardfork::ForkD, GAS, selector::BURN, &[1, 40]);
+    assert_eq!(r, Ok(Output::Unit));
+    assert_eq!(FooStorage::balance(&mut s, Address(1)).unwrap(), 60);
+
+    // Existing methods still behave as in v3 (copied).
+    let (r, _) = Dispatcher::dispatch(&mut s, Hardfork::ForkD, GAS, selector::TRANSFER, &[1, 2, 10]);
+    assert_eq!(r, Ok(Output::Unit));
+    assert_eq!(FooStorage::balance(&mut s, Address(2)).unwrap(), 10);
+}
+
 // The whole point: a historical ForkA block replays under v1 semantics even
 // though v2 and v3 now exist in the binary.
 #[test]
