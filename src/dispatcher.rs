@@ -50,6 +50,9 @@ impl Dispatcher {
             FooCall::SetFrozen { account, frozen } => {
                 active.set_frozen(&mut storage, account, frozen).map(|()| Output::Unit)
             }
+            FooCall::Burn { from, value } => {
+                active.burn(&mut storage, from, value).map(|()| Output::Unit)
+            }
         };
 
         (result, storage.gas_used)

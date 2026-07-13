@@ -14,6 +14,7 @@ pub mod selector {
     pub const BALANCE_OF: Selector = [0, 0, 0, 2];
     pub const MINT: Selector = [0, 0, 0, 3]; // added in v2
     pub const SET_FROZEN: Selector = [0, 0, 0, 4]; // added in v3
+    pub const BURN: Selector = [0, 0, 0, 5]; // added in v4
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -22,6 +23,7 @@ pub enum FooCall {
     BalanceOf { account: Address },
     Mint { to: Address, value: U256 },
     SetFrozen { account: Address, frozen: bool },
+    Burn { from: Address, value: U256 },
 }
 
 pub struct Abi;
@@ -47,6 +49,10 @@ impl Abi {
             selector::SET_FROZEN => Ok(FooCall::SetFrozen {
                 account: Address(args[0] as u64),
                 frozen: args[1] != 0,
+            }),
+            selector::BURN => Ok(FooCall::Burn {
+                from: Address(args[0] as u64),
+                value: args[1],
             }),
             _ => Err(Error::UnknownFunctionSelector(sel)),
         }

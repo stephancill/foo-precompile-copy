@@ -20,6 +20,7 @@ no version depends on another at runtime.
 | ForkA     | `FooV1`        | (a version may span forks) |
 | ForkB     | `FooV2`        | **Goal 1** `transfer` now rejects the zero address. **Goal 3** new `mint` method. |
 | ForkC     | `FooV3`        | **Goal 1** `transfer` blocks frozen accounts. **Goal 2** new `foo.frozen` state. **Goal 3** new `set_frozen` method. **Goal 4** new gas schedule. |
+| ForkD     | `FooV4`        | **Goal 3** new `burn` method; existing methods copied verbatim from v3. |
 
 ## File map
 
@@ -33,7 +34,8 @@ src/
     mod.rs        Foo business-logic trait (new methods default to "unsupported")
     v1.rs         FooV1  (frozen, full impl)
     v2.rs         FooV2  (frozen, full copy of v1 + changes)
-    v3.rs         FooV3  (tip, full copy of v2 + changes)
+    v3.rs         FooV3  (frozen, full copy of v2 + changes)
+    v4.rs         FooV4  (tip, full copy of v3 + new burn method)
   versions.rs     VersionManager::active(fork) gate -> &dyn Foo, + gas schedule
   dispatcher.rs   decode -> resolve version -> meter gas -> route
 tests/

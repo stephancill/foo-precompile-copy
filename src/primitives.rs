@@ -19,6 +19,7 @@ pub enum Hardfork {
     ForkA,
     ForkB,
     ForkC,
+    ForkD,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
