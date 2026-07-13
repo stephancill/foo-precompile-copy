@@ -13,7 +13,7 @@ mod storage;
 pub use storage::FooStorage;
 
 mod logic;
-pub use logic::{Foo, FooV1, FooV2, FooV3};
+pub use logic::{Foo, FooV1, FooV2, FooV3, FooV4};
 
 mod versions;
 pub use versions::{ActiveFoo, Version, VersionManager};

@@ -19,6 +19,7 @@ pub enum Hardfork {
     ForkA,
     ForkB,
     ForkC,
+    ForkD,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -26,6 +27,7 @@ pub enum Error {
     UnknownFunctionSelector(Selector),
     InsufficientBalance,
     TransferToZero,
+    ZeroValueTransfer,
     AccountFrozen(Address),
     OutOfGas,
 }

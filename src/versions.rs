@@ -5,7 +5,7 @@
 //! the design constraint to keep the hot execution path free of dynamic dispatch.
 
 use crate::gas::{GasParams, GAS_PARAMS_V1, GAS_PARAMS_V2};
-use crate::logic::{Foo, FooV1, FooV2, FooV3};
+use crate::logic::{Foo, FooV1, FooV2, FooV3, FooV4};
 use crate::primitives::{Address, Error, Hardfork, Storage, U256};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -13,6 +13,7 @@ pub enum Version {
     V1,
     V2,
     V3,
+    V4,
 }
 
 pub struct VersionManager;
@@ -24,6 +25,7 @@ impl VersionManager {
             Hardfork::Genesis | Hardfork::ForkA => Version::V1,
             Hardfork::ForkB => Version::V2,
             Hardfork::ForkC => Version::V3,
+            Hardfork::ForkD => Version::V4,
         }
     }
 
@@ -31,7 +33,8 @@ impl VersionManager {
     pub fn gas_params_for(fork: Hardfork) -> GasParams {
         match fork {
             Hardfork::Genesis | Hardfork::ForkA | Hardfork::ForkB => GAS_PARAMS_V1,
-            Hardfork::ForkC => GAS_PARAMS_V2,
+            // v4 spans ForkD without a gas change: same frozen schedule as ForkC.
+            Hardfork::ForkC | Hardfork::ForkD => GAS_PARAMS_V2,
         }
     }
 }
@@ -41,6 +44,7 @@ pub enum ActiveFoo {
     V1(FooV1),
     V2(FooV2),
     V3(FooV3),
+    V4(FooV4),
 }
 
 impl ActiveFoo {
@@ -49,6 +53,7 @@ impl ActiveFoo {
             Version::V1 => ActiveFoo::V1(FooV1),
             Version::V2 => ActiveFoo::V2(FooV2),
             Version::V3 => ActiveFoo::V3(FooV3),
+            Version::V4 => ActiveFoo::V4(FooV4),
         }
     }
 }
@@ -59,6 +64,7 @@ impl Foo for ActiveFoo {
             ActiveFoo::V1(f) => f.transfer(storage, from, to, value),
             ActiveFoo::V2(f) => f.transfer(storage, from, to, value),
             ActiveFoo::V3(f) => f.transfer(storage, from, to, value),
+            ActiveFoo::V4(f) => f.transfer(storage, from, to, value),
         }
     }
 
@@ -67,6 +73,7 @@ impl Foo for ActiveFoo {
             ActiveFoo::V1(f) => f.balance_of(storage, account),
             ActiveFoo::V2(f) => f.balance_of(storage, account),
             ActiveFoo::V3(f) => f.balance_of(storage, account),
+            ActiveFoo::V4(f) => f.balance_of(storage, account),
         }
     }
 
@@ -75,6 +82,7 @@ impl Foo for ActiveFoo {
             ActiveFoo::V1(f) => f.mint(storage, to, value),
             ActiveFoo::V2(f) => f.mint(storage, to, value),
             ActiveFoo::V3(f) => f.mint(storage, to, value),
+            ActiveFoo::V4(f) => f.mint(storage, to, value),
         }
     }
 
@@ -83,6 +91,7 @@ impl Foo for ActiveFoo {
             ActiveFoo::V1(f) => f.set_frozen(storage, account, frozen),
             ActiveFoo::V2(f) => f.set_frozen(storage, account, frozen),
             ActiveFoo::V3(f) => f.set_frozen(storage, account, frozen),
+            ActiveFoo::V4(f) => f.set_frozen(storage, account, frozen),
         }
     }
 }
