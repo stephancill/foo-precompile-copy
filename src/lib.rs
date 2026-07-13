@@ -16,7 +16,7 @@ mod logic;
 pub use logic::{Foo, FooV1, FooV2, FooV3};
 
 mod versions;
-pub use versions::{ActiveFoo, Version, VersionManager};
+pub use versions::VersionManager;
 
 mod dispatcher;
 pub use dispatcher::{Dispatcher, Output};

@@ -34,7 +34,7 @@ src/
     v1.rs         FooV1  (frozen, full impl)
     v2.rs         FooV2  (frozen, full copy of v1 + changes)
     v3.rs         FooV3  (tip, full copy of v2 + changes)
-  versions.rs     VersionManager (fork -> version + gas) and ActiveFoo router
+  versions.rs     VersionManager::active(fork) gate -> &dyn Foo, + gas schedule
   dispatcher.rs   decode -> resolve version -> meter gas -> route
 tests/
   replay.rs       golden / replay tests for every goal

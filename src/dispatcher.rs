@@ -3,9 +3,8 @@
 
 use crate::abi::{Abi, FooCall};
 use crate::gas::MeteredStorage;
-use crate::logic::Foo;
 use crate::primitives::{Error, Hardfork, Selector, Storage, U256};
-use crate::versions::{ActiveFoo, VersionManager};
+use crate::versions::VersionManager;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Output {
@@ -33,7 +32,7 @@ impl Dispatcher {
         };
 
         // 2. Resolve version + gas schedule from the fork (centralized).
-        let active = ActiveFoo::resolve(fork);
+        let active = VersionManager::active(fork);
         let params = VersionManager::gas_params_for(fork);
         let mut storage = MeteredStorage::new(raw_storage, params, gas_limit);
 
